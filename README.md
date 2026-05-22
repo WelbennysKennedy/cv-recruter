@@ -64,6 +64,11 @@ GROQ_API_KEY='sua chave da groq aqui'
    poetry install
    ```
 
+   Se você usar outro gerenciador baseado no `pyproject.toml`, instale também o extra `local` para executar a interface Streamlit e integrações com Google:
+   ```bash
+   pip install ".[local]"
+   ```
+
 ### Execução no Linux
 
 Para usuários Linux, há um script de build disponível na pasta `bin` que facilita a execução do projeto. Basta executar:
@@ -92,7 +97,7 @@ http://localhost:8501
 
 ## Deploy na Vercel
 
-O arquivo `app.py` na raiz expõe uma API FastAPI para deploy na Vercel. A interface Streamlit continua sendo executada localmente pelo comando acima.
+O arquivo `app.py` na raiz expõe uma API FastAPI para deploy na Vercel. A interface Streamlit continua sendo executada localmente pelo comando acima, e o deploy instala somente as dependências necessárias para a API para manter o bundle da função menor.
 
 Ao importar o repositório na Vercel, configure a variável de ambiente:
 
