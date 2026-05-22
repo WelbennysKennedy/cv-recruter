@@ -90,6 +90,24 @@ http://localhost:8501
 
 *Nota: A porta padrão do Streamlit é `8501` quando não especificada.*
 
+## Deploy na Vercel
+
+O arquivo `app.py` na raiz expõe uma API FastAPI para deploy na Vercel. A interface Streamlit continua sendo executada localmente pelo comando acima.
+
+Ao importar o repositório na Vercel, configure a variável de ambiente:
+
+```env
+GROQ_API_KEY=sua_chave_aqui
+```
+
+Endpoints da API:
+
+- `GET /`: status da API.
+- `GET /health`: verificação simples de saúde.
+- `POST /api/analyze-cv`: recebe um PDF no campo `cv_file` e a descrição da vaga no campo `job_description`.
+
+Depois do deploy, a documentação interativa do FastAPI fica disponível em `/docs`.
+
 ## Uso
 
 Após iniciar o projeto, você poderá:
