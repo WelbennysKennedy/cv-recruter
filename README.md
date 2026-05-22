@@ -107,7 +107,7 @@ GROQ_API_KEY=sua_chave_aqui
 
 Endpoints da API:
 
-- `GET /`: status da API.
+- `GET /`: tela web para enviar currículo e descrição da vaga.
 - `GET /health`: verificação simples de saúde.
 - `POST /api/analyze-cv`: recebe um PDF no campo `cv_file` e a descrição da vaga no campo `job_description`.
 
