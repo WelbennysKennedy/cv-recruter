@@ -95,6 +95,25 @@ http://localhost:8501
 
 *Nota: A porta padrão do Streamlit é `8501` quando não especificada.*
 
+## Deploy no Streamlit Community Cloud
+
+Para publicar a interface Streamlit, use estas configurações no Streamlit Community Cloud:
+
+- Repository: `WelbennysKennedy/cv-recruter`
+- Branch: `main`
+- Main file path: `analyser/app.py`
+- Python version: `3.12`
+
+O arquivo `analyser/requirements.txt` fica ao lado do entrypoint do Streamlit para o Community Cloud instalar as dependências da interface sem usar o `pyproject.toml` da API FastAPI.
+
+Não use `analyser/cron_sheet.py` como main file path. Esse arquivo é um processo de cron em loop para buscar currículos no Google Drive/Sheets, não uma aplicação Streamlit.
+
+Em `Secrets`, configure:
+
+```toml
+GROQ_API_KEY = "sua_chave_aqui"
+```
+
 ## Deploy na Vercel
 
 O arquivo `app.py` na raiz expõe uma API FastAPI para deploy na Vercel. A interface Streamlit continua sendo executada localmente pelo comando acima, e o deploy instala somente as dependências necessárias para a API para manter o bundle da função menor.

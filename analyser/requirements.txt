@@ -1,0 +1,12 @@
+# Streamlit Community Cloud uses this file when the entrypoint is analyser/app.py.
+# Select Python 3.12 in Advanced settings when deploying the app.
+streamlit==1.41.1
+pandas==2.2.3
+plotly==5.24.1
+streamlit-aggrid==1.0.5
+streamlit-option-menu==0.3.13
+tinydb==4.8.2
+pymupdf==1.25.2
+python-dotenv==1.0.1
+langchain-openai==0.3.1
+streamlit-agraph==0.0.45
