@@ -1,31 +1,38 @@
 import os
 import re
 
+import httpx
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
 
 load_dotenv()
 
-GROQ_BASE_URL = "https://api.groq.com/openai/v1"
+GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
 DEFAULT_GROQ_MODEL = "llama-3.3-70b-versatile"
 
 
 class LlamaClient:
     def __init__(self):
-        groq_api_key = os.getenv("GROQ_API_KEY")
-        if not groq_api_key:
+        self.groq_api_key = os.getenv("GROQ_API_KEY")
+        if not self.groq_api_key:
             raise ValueError("GROQ_API_KEY nao foi encontrada no arquivo .env.")
-
-        self.client = ChatOpenAI(
-            api_key=groq_api_key,
-            base_url=GROQ_BASE_URL,
-            model_name=os.getenv("GROQ_MODEL", DEFAULT_GROQ_MODEL),
-            temperature=0.1,
-        )
+        self.model = os.getenv("GROQ_MODEL", DEFAULT_GROQ_MODEL)
 
     def generate_response(self, prompt):
-        response = self.client.invoke(prompt)
-        return response.content
+        response = httpx.post(
+            GROQ_CHAT_URL,
+            headers={
+                "Authorization": f"Bearer {self.groq_api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": self.model,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.1,
+            },
+            timeout=120,
+        )
+        response.raise_for_status()
+        return response.json()["choices"][0]["message"]["content"]
     
     def score_competence(self, job, qualifications):
         prompt = f'''

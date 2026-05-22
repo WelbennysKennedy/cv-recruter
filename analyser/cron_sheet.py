@@ -1,3 +1,17 @@
+import runpy
+import sys
+from pathlib import Path
+
+
+def _is_streamlit_command():
+    return any("streamlit" in Path(arg).name.lower() for arg in sys.argv)
+
+
+if __name__ == "__main__" and _is_streamlit_command():
+    runpy.run_path(str(Path(__file__).with_name("app.py")), run_name="__main__")
+    raise SystemExit
+
+
 import fitz, uuid, re, time, os
 from service.sheets import AccessResume
 from database.tiny_db import AnalyserDatabase
@@ -119,5 +133,4 @@ if __name__ == "__main__":
             print(err) 
             time.sleep(20)
             continue
-
 
