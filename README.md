@@ -104,7 +104,7 @@ Para publicar a interface Streamlit, use estas configurações no Streamlit Comm
 - Main file path: `analyser/app.py`
 - Python version: `3.12`
 
-O arquivo `analyser/requirements.txt` fica ao lado do entrypoint do Streamlit para o Community Cloud instalar as dependências da interface sem usar o `pyproject.toml` da API FastAPI.
+Os arquivos `requirements.txt` e `analyser/requirements.txt` listam as dependências da interface para o Community Cloud instalar tudo que `analyser/app.py` importa.
 
 Não use `analyser/cron_sheet.py` como main file path. Esse arquivo é um processo de cron em loop para buscar currículos no Google Drive/Sheets, não uma aplicação Streamlit.
 
