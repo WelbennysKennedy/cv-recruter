@@ -7,44 +7,15 @@ from routes.curriculum import CurriculumRoute
 
 from streamlit_agraph import agraph, Node, Edge, Config
 
-
+import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
-
-try:
-    import plotly.express as px
-    import plotly.graph_objects as go
-except ModuleNotFoundError:
-    px = None
-    go = None
-
-
-class SimpleChart:
-    def __init__(self, categories, scores, label="Pontuacao"):
-        self.categories = categories
-        self.scores = scores
-        self.label = label
-
-    def update_layout(self, **kwargs):
-        return self
-
-
-def render_chart(fig):
-    if isinstance(fig, SimpleChart):
-        data = pd.DataFrame({fig.label: fig.scores}, index=fig.categories)
-        st.bar_chart(data)
-        return
-
-    st.plotly_chart(fig, use_container_width=True)
-
 
 def radar_chart_plotly_express(categories, scores):
     """
     Radar Chart (Plotly Express) com fill='toself'.
     Cores personalizadas: linha vermelha.
     """
-    if px is None:
-        return SimpleChart(categories, scores, "Competencias")
-
     df = pd.DataFrame(dict(r=scores, theta=categories))
     fig = px.line_polar(df, r='r', theta='theta', line_close=True)
     fig.update_traces(fill='toself', line_color='red')  # cor vermelha
@@ -59,9 +30,6 @@ def radar_chart_basic_scatterpolar(categories, scores):
     Radar Chart básico com go.Scatterpolar (um único trace).
     Cor customizada (verde).
     """
-    if go is None:
-        return SimpleChart(categories, scores, "Estrategias")
-
     fig = go.Figure(data=go.Scatterpolar(
         r=scores, theta=categories, fill='toself', line_color='green'
     ))
@@ -76,9 +44,6 @@ def radar_chart_multiple_trace(categories, job_scores, resum_scores):
     Radar Chart com go.Scatterpolar e múltiplos traces
     (Exemplo: 'Produto A' e 'Produto B'), cada um com cor diferente.
     """
-    if go is None:
-        return SimpleChart(categories, resum_scores, "Candidato")
-
     r_values_A = job_scores
     r_values_B = resum_scores
 
@@ -246,11 +211,11 @@ def render_analyse():
                             # Exibe os 3 gráficos lado a lado
                             c1, c2, c3 = st.columns(3)
                             with c1:
-                                render_chart(fig1)
+                                st.plotly_chart(fig1, use_container_width=True)
                             with c2:
-                                render_chart(fig2)
+                                st.plotly_chart(fig2, use_container_width=True)
                             with c3:
-                                render_chart(fig3)
+                                st.plotly_chart(fig3, use_container_width=True)
                                 
                             # CSS personalizado para expanders
                             st.markdown("""
