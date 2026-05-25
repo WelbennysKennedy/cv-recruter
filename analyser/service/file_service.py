@@ -1,9 +1,20 @@
-import fitz, uuid
+import uuid
 from pathlib import Path
+
+
+def _load_fitz():
+    try:
+        import fitz
+        return fitz
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            "PyMuPDF nao esta instalado. Configure pymupdf no deploy para ler PDFs."
+        ) from exc
 
 
 class FileService:   
     def read(self, file_path):
+        fitz = _load_fitz()
         content = ""
         with fitz.open(file_path) as doc:
             for page in doc:
