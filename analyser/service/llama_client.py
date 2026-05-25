@@ -1,7 +1,9 @@
 import os
 import re
+import json
+import urllib.error
+import urllib.request
 
-import httpx
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,21 +20,31 @@ class LlamaClient:
         self.model = os.getenv("GROQ_MODEL", DEFAULT_GROQ_MODEL)
 
     def generate_response(self, prompt):
-        response = httpx.post(
+        payload = json.dumps(
+            {
+                "model": self.model,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.1,
+            }
+        ).encode("utf-8")
+        request = urllib.request.Request(
             GROQ_CHAT_URL,
+            data=payload,
             headers={
                 "Authorization": f"Bearer {self.groq_api_key}",
                 "Content-Type": "application/json",
             },
-            json={
-                "model": self.model,
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.1,
-            },
-            timeout=120,
+            method="POST",
         )
-        response.raise_for_status()
-        return response.json()["choices"][0]["message"]["content"]
+
+        try:
+            with urllib.request.urlopen(request, timeout=120) as response:
+                data = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as error:
+            detail = error.read().decode("utf-8", errors="replace")
+            raise RuntimeError(f"Groq API error {error.code}: {detail}") from error
+
+        return data["choices"][0]["message"]["content"]
     
     def score_competence(self, job, qualifications):
         prompt = f'''
