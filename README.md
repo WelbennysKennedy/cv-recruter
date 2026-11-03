@@ -1,158 +1,173 @@
-# Analisador de Currículos
+# CV Recruter — Analisador de Currículos com IA
 
-Este é um projeto de análise de currículos que utiliza a API do ChatGPT para resumir e pontuar currículos com base na descrição de uma vaga específica. O projeto é desenvolvido em Python, com o Streamlit como front-end para a interface do usuário.
+Compara currículos em PDF com uma vaga usando IA. Para cada candidato, o projeto gera um resumo, uma nota de 0 a 10 e um relatório crítico, e mostra tudo em um painel feito com Streamlit.
 
-## Imagens do Projeto
-
-![Tela do projeto 1](<img_projet/1 (1).png>)
-
-![Tela do projeto 2](<img_projet/1 (2).png>)
-
-![Tela do projeto 3](<img_projet/1 (3).png>)
-
-![Tela do projeto 4](<img_projet/1 (4).png>)
-
-![Tela do projeto 5](<img_projet/1 (5).png>)
-
-![Tela do projeto 6](<img_projet/1 (6).png>)
-
-![Tela do projeto 7](<img_projet/1 (7).png>)
+![Painel com a classificação dos candidatos por nota e a tabela de resultados](imagens/cv%20analise.png)
 
 ## Funcionalidades
 
-- **Upload de Currículos em Lote**: Carregue vários currículos de uma vez para análise.
-- **Análise de Currículos**: Avalie currículos com base em diferentes seções, atribuindo uma pontuação conforme a relevância para a vaga.
-- **Comparação de Currículos**: Compare currículos lado a lado para uma avaliação mais detalhada.
-- **Análise Crítica Descritiva**: Geração de uma análise crítica e descritiva sobre o currículo em relação à vaga.
+- Leitura de currículos em PDF, em lote
+- Resumo de cada currículo em Markdown
+- Nota do candidato em relação à vaga
+- Relatório com pontos de alinhamento, desalinhamento e atenção
+- Gráfico e tabela com a classificação dos candidatos
+- Comparação de candidatos lado a lado e download do PDF original
+- Importação de currículos do Google Drive (opcional)
 
-## Tecnologias Utilizadas
+## O que instalar
 
-- **Python**: Linguagem de programação principal utilizada no projeto.
-- **Streamlit**: Framework para criar a interface web de maneira rápida e interativa.
-- **ChatGPT (modelo 4o-mini)**: LLM utilizado para resumir os currículos e gerar a pontuação.
-- **TinyDB**: Banco de dados NoSQL utilizado para armazenar informações.
-- **Poetry**: Ferramenta de gerenciamento de dependências e ambientes virtuais em Python.
+Você só precisa instalar o [uv](https://docs.astral.sh/uv/), o gerenciador de pacotes do projeto.
 
-## Pré-requisitos
-
-- Python 3.10 ou superior
-- Poetry instalado globalmente
-- Chave da API da Groq
-
-## Configuração do Ambiente
-
-Para o projeto funcionar corretamente, é necessário criar um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
-
-```env
-GROQ_API_KEY='sua chave da groq aqui'
+```powershell
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
-
-> **Atenção:** Substitua `'sua chave da groq aqui'` pela sua chave de API da Groq.
-
-## Instalação e Execução
-
-### Passos para Instalação
-
-1. Clone este repositório para o seu ambiente local:
-   ```bash
-   git clone https://github.com/asimov-academy/cv-recruter.git
-   cd cv-recruter
-   ```
-
-2. Instale as dependências do projeto utilizando o Poetry:
-   ```bash
-   poetry install
-   ```
-
-   Se você usar outro gerenciador baseado no `pyproject.toml`, instale também o extra `local` para executar a interface Streamlit e integrações com Google:
-   ```bash
-   pip install ".[local]"
-   ```
-
-### Execução no Linux
-
-Para usuários Linux, há um script de build disponível na pasta `bin` que facilita a execução do projeto. Basta executar:
 
 ```bash
-./bin/build.sh
+# Linux / macOS
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-O script inicia o Streamlit no endereço `0.0.0.0` e na porta `8585`.
+O `uv sync` cuida do resto: baixa o Python 3.10, se necessário, e instala as dependências abaixo em um ambiente virtual `.venv`.
 
-### Execução no Windows
+| Pacote | Para que serve |
+|---|---|
+| `streamlit`, `streamlit-aggrid`, `pandas` | Painel, tabela e gráfico |
+| `langchain-groq` | Comunicação com a IA da Groq |
+| `pymupdf` | Leitura dos PDFs |
+| `tinydb` | Banco de dados local (`db.json`) |
+| `pydantic` | Validação dos dados |
+| `python-dotenv` | Leitura do arquivo `.env` |
+| `google-api-python-client`, `google-auth-httplib2`, `google-auth-oauthlib` | Google Drive (opcional) |
 
-Para usuários Windows, a execução deve ser feita manualmente. Utilize o seguinte comando para iniciar o projeto:
+## Chave de API
+
+O projeto precisa de uma chave da [Groq](https://console.groq.com/keys).
+
+1. Crie a chave em https://console.groq.com/keys.
+2. Crie o arquivo `.env` na raiz do projeto a partir do modelo:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Coloque a sua chave no `.env`:
+
+   ```env
+   GROQ_API_KEY=sua_chave_aqui
+   ```
+
+> **Nunca publique o arquivo `.env`.** Ele já está no `.gitignore`.
+
+## Como rodar
+
+Rode todos os comandos na raiz do projeto.
+
+**1. Baixe o projeto e instale as dependências**
 
 ```bash
-poetry run streamlit run analyser/app.py
+git clone https://github.com/WelbennysKennedy/cv-recruter.git
+cd cv-recruter
+uv sync
 ```
 
-Depois, acesse o projeto através do seu navegador no endereço:
+**2. Configure a chave de API**, como explicado na seção anterior.
 
-```
-http://localhost:8501
-```
+**3. Crie a pasta `curriculos` e coloque nela os PDFs que serão analisados**
 
-*Nota: A porta padrão do Streamlit é `8501` quando não especificada.*
-
-## Deploy no Streamlit Community Cloud
-
-Para publicar a interface Streamlit, use estas configurações no Streamlit Community Cloud:
-
-- Repository: `WelbennysKennedy/cv-recruter`
-- Branch: `main`
-- Main file path: `analyser/app.py`
-- Python version: `3.12`
-
-Os arquivos `requirements.txt` e `analyser/requirements.txt` listam as dependências da interface para o Community Cloud instalar tudo que `analyser/app.py` importa.
-
-Não use `analyser/cron_sheet.py` como main file path. Esse arquivo é um processo de cron em loop para buscar currículos no Google Drive/Sheets, não uma aplicação Streamlit.
-
-Em `Secrets`, configure:
-
-```toml
-GROQ_API_KEY = "sua_chave_aqui"
+```bash
+mkdir curriculos
 ```
 
-## Deploy na Vercel
+**4. Crie a vaga** (rode só uma vez, pois cada execução cadastra a vaga de novo)
 
-O arquivo `app.py` na raiz expõe uma API FastAPI para deploy na Vercel. A interface Streamlit continua sendo executada localmente pelo comando acima, e o deploy instala somente as dependências necessárias para a API para manter o bundle da função menor.
-
-Ao importar o repositório na Vercel, configure a variável de ambiente:
-
-```env
-GROQ_API_KEY=sua_chave_aqui
+```bash
+uv run python analyze/create_job.py
 ```
 
-Endpoints da API:
+**5. Analise os currículos**
 
-- `GET /`: tela web para enviar currículo e descrição da vaga.
-- `GET /health`: verificação simples de saúde.
-- `POST /api/analyze-cv`: recebe um PDF no campo `cv_file` e a descrição da vaga no campo `job_description`.
+```bash
+uv run python analyze/import_cv.py
+```
 
-Depois do deploy, a documentação interativa do FastAPI fica disponível em `/docs`.
+**6. Abra o painel**
 
-## Uso
+```bash
+uv run python -m streamlit run analyze/app.py
+```
 
-Após iniciar o projeto, você poderá:
+Acesse http://localhost:8501 e selecione a vaga no topo da página.
 
-1. Cadastrar novas vagas através da interface.
-2. Fazer upload de currículos em lote para análise.
-3. Visualizar a análise de cada currículo por vaga, com a possibilidade de comparar currículos.
-4. Gerar análises críticas descritivas sobre os currículos em relação às vagas.
+## Usar outra vaga
 
-## Documentação do Sistema de Pontuação
+1. Altere o nome e a descrição da vaga em `analyze/create_job.py`.
+2. Use o mesmo nome na busca da vaga em `analyze/import_cv.py`.
+3. Rode novamente os passos 4 e 5.
 
-O sistema de pontuação foi projetado para avaliar currículos com base em uma vaga específica. As seções avaliadas incluem:
+## Cuidados
 
-- **Experiência (Peso: 30%)**
-- **Habilidades Técnicas (Peso: 25%)**
-- **Educação (Peso: 10%)**
-- **Idiomas (Peso: 10%)**
-- **Pontos Fortes (Peso: 15%)**
-- **Pontos Fracos (Desconto de até 10%)**
+- **O botão "Limpar Análise" apaga os PDFs da pasta `curriculos/`**, além das análises da vaga. Guarde uma cópia dos arquivos.
+- **Rodar `import_cv.py` de novo duplica os candidatos**, porque o script analisa todos os PDFs da pasta a cada execução.
+- **Os currículos são enviados para a API da Groq** durante a análise. Tenha autorização para processar esses dados.
+- **As notas e os relatórios são gerados por IA** e podem variar ou conter erros. Use o resultado como apoio, não como decisão final.
 
-Cada seção recebe uma pontuação de 0 a 10, com justificativas para as notas atribuídas. A pontuação final é uma média ponderada das avaliações, refletindo a adequação do candidato à vaga.
+## Como a nota é calculada
+
+A IA avalia o currículo em relação à vaga usando estes critérios:
+
+| Critério | Peso |
+|---|---|
+| Experiência | 30% |
+| Habilidades técnicas | 25% |
+| Pontos fortes | 15% |
+| Educação | 10% |
+| Idiomas | 10% |
+| Pontos fracos | Desconto de até 10% |
+
+## Google Drive (opcional)
+
+Use estes passos apenas se quiser baixar os currículos de uma pasta do Google Drive.
+
+1. Salve as credenciais OAuth2 do Google Cloud como `credentials.json` na raiz do projeto.
+2. Gere o `token.json`:
+
+   ```bash
+   uv run python analyze/drive/authenticate.py
+   ```
+
+3. Em `analyze/drive/download_cv.py`, troque o valor de `folder_id` pelo ID da sua pasta.
+4. Baixe os arquivos para `curriculos/`:
+
+   ```bash
+   uv run python analyze/drive/download_cv.py
+   ```
+
+## Testes
+
+O teste faz uma chamada real à Groq, então precisa de uma chave válida.
+
+```bash
+uv run pytest tests/test_ai.py
+```
+
+O workflow `.github/workflows/run_test.yml` roda esse teste todo mês. Para usá-lo, crie o secret `GROQ_API_KEY` no ambiente `production` do repositório no GitHub.
+
+## Estrutura do projeto
+
+```text
+analyze/
+├── app.py          # Painel Streamlit
+├── ai.py           # Prompts e chamadas à Groq
+├── import_cv.py    # Análise dos currículos
+├── create_job.py   # Cadastro da vaga
+├── database.py     # Acesso ao banco TinyDB
+├── helper.py       # Leitura de PDF e extração dos dados
+├── models/         # Modelos de dados
+└── drive/          # Integração com o Google Drive
+tests/              # Teste da integração com a Groq
+imagens/            # Imagem deste README
+```
 
 ## Contato
 

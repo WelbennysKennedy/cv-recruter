@@ -1,0 +1,43 @@
+name: Testes Mensais
+
+on:
+  schedule:
+    - cron: '0 3 1 * *'
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v9.0.0
+        with:
+          enable-cache: true
+
+      - name: Instalar dependências
+        run: uv sync
+
+      - name: Verificar secrets
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          echo "Verificando variáveis..."
+
+          test -n "$GROQ_API_KEY" || {
+            echo "ERRO: GROQ_API_KEY não foi carregada"
+            exit 1
+          }
+          
+          echo "GROQ_API_KEY: OK"
+              
+
+      - name: Carregar variáveis do .env
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: uv run pytest tests/test_ai.py
